@@ -38,16 +38,98 @@ function addCustomer(fName, lName, username, email) {
     .execute('usp_PopulateCustomer')
 }
 
+function displayAllGames() {
+  console.log("display games");
+  return new sql.Request().query('SELECT * FROM tblGame');
+}
+
+function updateGame(gameID, gameName, gameType, studioName, gameDes) {
+  console.log("Updating Game");
+  var query = "UPDATE tblGame SET GameName='" + gameName + "', GameTypeID=" + gameType + ", StudioID=" + studioName + ", GameDescr='" + gameDes + "' WHERE GameID=" + gameID;
+  console.log(query);
+  return new sql.Request().query(query);
+}
+
+function createGame(gameName, gameType, studioName, gameDes) {
+  console.log("Creating Game");
+  return new sql.Request()
+    .input('GameTypeName', sql.VarChar(35), gameType)
+    .input('StudioName', sql.VarChar(35), studioName)
+    .input('GameName', sql.VarChar(100), gameName)
+    .input('GameDescr', sql.VarChar(3500), gameDes)
+    .execute('usp_PopulateGame')
+}
+
+function deleteGame(gameID) {
+  console.log("Deleting Game");
+  var query = "DELETE FROM tblGame WHERE GameID=" + gameID;
+  console.log(query);
+  return new sql.Request().query(query);
+}
+
 function makeRouter() {
   app.use(cors())  
  
   // frames
-  app.get('/', (req, res) => {
+  app.get('/', function (req, res) {
     res.sendFile('/static/views/index.html', { root: __dirname })
   })
 
   app.get('/account', function (req, res) {
     res.sendFile('/static/views/account.html', { root: __dirname })
+  })
+
+  app.get('/games', function (req, res) {
+    res.sendFile('/static/views/games.html', { root: __dirname })
+  });
+
+  app.get('/games/all', function (req, res) {
+    displayAllGames().then(function (data) {
+      res.writeHeader(200, { "Content-Type": "text/html" });
+
+      res.write((JSON.stringify(data).split("\"}").join("\"}<br>")));
+      res.end();
+
+    });
+  })
+
+  app.post('/gameSubmit', function (req, res) {
+    connectToDb().then(function () {
+      var gameID = req.body.gameID;
+      var gameName = req.body.gameName;
+      var gameType = req.body.gameType;
+      var studioName = req.body.studioName;
+      var gameDes = req.body.gameDes;
+      var requestType = req.body.optradio;
+      console.log(requestType);
+      switch (requestType) {
+        case 'create':
+          createGame(gameName, gameType, studioName, gameDes).then(function () {
+            res.redirect('/games')
+          }).catch(function (err) {
+            console.log(err);
+          });
+          break;
+        case 'update':
+          updateGame(gameID, gameName, gameType, studioName, gameDes).then(function () {
+            res.redirect('/games')
+          }).catch(function (err) {
+            console.log(err);
+          });
+          break;
+        case 'delete':
+          deleteGame(gameID).then(function () {
+            res.redirect('/games')
+          }).catch(function (err) {
+            console.log(err);
+          });
+          break;
+        default:
+          break;
+      }
+    }).catch(function (error) {
+      console.log(error);
+    });
   })
 
   app.post('/submit', function (req, res) {
@@ -62,7 +144,7 @@ function makeRouter() {
       var lName = req.body.lastName;
       var email = req.body.email;
       console.log(username);
-      
+
       addCustomer(fName, lName, username, email).then(function () {
         console.log(email);
         console.log("success");
