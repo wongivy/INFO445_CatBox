@@ -7,7 +7,11 @@ $(document).ready(function () {
 
 function getGameObject(gameID) {
 	$.getJSON("/getGame/" + gameID, function (data) {
-		console.log(data[0]);
-		
+		var gameObject = data[0];
+		$("#gameID").val(gameObject.GameID);
+		$("#gameName").val(gameObject.GameName);
+		$("#gameType").val(gameObject.GameTypeID);
+		$("#studioName").val(gameObject.StudioID);
+		$("#gameDes").val(gameObject.GameDescr);
 	});
 }

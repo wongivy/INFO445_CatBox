@@ -121,33 +121,9 @@ function makeRouter() {
       var gameType = req.body.gameType;
       var studioName = req.body.studioName;
       var gameDes = req.body.gameDes;
-      var requestType = req.body.optradio;
-      console.log(requestType);
-      switch (requestType) {
-        case 'create':
-          createGame(gameName, gameType, studioName, gameDes).then(function () {
-            res.redirect('/')
-          }).catch(function (err) {
-            console.log(err);
-          });
-          break;
-        case 'update':
-          updateGame(gameID, gameName, gameType, studioName, gameDes).then(function () {
-            res.redirect('/')
-          }).catch(function (err) {
-            console.log(err);
-          });
-          break;
-        case 'delete':
-          deleteGame(gameID).then(function () {
-            res.redirect('/')
-          }).catch(function (err) {
-            console.log(err);
-          });
-          break;
-        default:
-          break;
-      }
+      updateGame(gameID, gameName, gameType, studioName, gameDes).then(function() {
+          res.redirect('/')
+      });
     }).catch(function (error) {
       console.log(error);
     });
