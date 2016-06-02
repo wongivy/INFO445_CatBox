@@ -1,23 +1,26 @@
-var showAllGamesBtn = document.getElementById('btn-showAllGames');
-
-showAllGamesBtn.addEventListener('click', function (event) {
+var showAllGamesBtn = $('#btn-showAllGames');
+console.log(showAllGamesBtn);
+showAllGamesBtn.click(function (event) {
   console.log("button pressed")
   getGames();
 });
 
 function getGames() {
-  var xmlhttp = new XMLHttpRequest();
-  var url = '/games/all';
-  xmlhttp.onreadystatechange = function () {
-    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-      var myArr = JSON.parse(xmlhttp.responseText);
-      parse(myArr);
-    }
-  };
-  xmlhttp.open("GET", url, true);
-  xmlhttp.send();
+  $.getJSON("/games/all", function (data) {
+    var table = $("#resultsTable");
+    $.each(data, function (ID, gameObject) {
+      var rowData = $('<tr></tr>');
+      rowData.append("<td>" + gameObject.GameName + "<td>");
+      rowData.append("<td>" + gameObject.GameTypeID + "<td>");
+      rowData.append("<td>" + gameObject.StudioID + "<td>");
+      rowData.append("<td>" + gameObject.GameDescr + "<td>");
+      rowData.append("<button type='submit' class='btn btn-info' onclick='editGame(" + gameObject.GameID + ")'>Edit</button>");
+      rowData.append("<button type='submit' class='btn btn-info'>Delete</button>");
+      table.append(rowData);
+    });
+  });
 }
 
-function parse(data) {
-  document.writeln((JSON.stringify(data).split("\"}").join("\"}<br>")));
+function editGame(gameID) {
+  window.location.href = "/edit/" + gameID;
 }
