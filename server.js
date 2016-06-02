@@ -89,6 +89,13 @@ function makeRouter() {
     })
   })
 
+  app.get("/delete/:gameID", function(req, res) {
+    var gameID = req.params.gameID;
+    deleteGame(gameID).then(function(data) {
+      res.redirect('/')
+    })
+  })
+  
   app.get('/delete', function (req, res) {
     deleteGame(gameID).then(function () {
       console.log(req.gameID);

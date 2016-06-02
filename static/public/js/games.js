@@ -15,7 +15,7 @@ function getGames() {
       rowData.append("<td>" + gameObject.StudioID + "<td>");
       rowData.append("<td>" + gameObject.GameDescr + "<td>");
       rowData.append("<button type='submit' class='btn btn-info' onclick='editGame(" + gameObject.GameID + ")'>Edit</button>");
-      rowData.append("<button type='submit' class='btn btn-info'>Delete</button>");
+      rowData.append("<button type='submit' class='btn btn-info'onclick='deleteGame(" + gameObject.GameID + ")'>Delete</button>");
       table.append(rowData);
     });
   });
@@ -23,4 +23,9 @@ function getGames() {
 
 function editGame(gameID) {
   window.location.href = "/edit/" + gameID;
+}
+
+function deleteGame(gameID) {
+  console.log("Delete Game");
+  window.location.href = "/delete/" + gameID;
 }
